@@ -14,6 +14,7 @@ namespace SceneWindowSystem
 	{
 		const string kFilePath = "ProjectSettings/SceneWindow.txt";
 
+		// Key:ClassName Value:ScenePaths
 		public readonly Dictionary<string, string[]> map = new Dictionary<string, string[]>();
 
 
@@ -74,10 +75,10 @@ namespace SceneWindowSystem
 			}
 		}
 
-		public bool IsTarget(string className, string sceneName)
+		public bool IsTarget(string className, string scenePath)
 		{
-			string[] sceneNames;
-			return map.TryGetValue(className, out sceneNames) && Array.IndexOf(sceneNames, sceneName) >= 0;
+			string[] scenePaths;
+			return map.TryGetValue(className, out scenePaths) && Array.IndexOf(scenePaths, scenePath) >= 0;
 		}
 	}
 }

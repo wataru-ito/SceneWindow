@@ -1,2 +1,2 @@
-﻿Sample01Window,Sample01
-Sample02Window,Sample02
+﻿Sample01Window,Assets/Scenes/Sample01.unity
+Sample02Window,Assets/Scenes/Sample02.unity

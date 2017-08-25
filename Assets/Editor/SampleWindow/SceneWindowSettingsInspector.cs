@@ -13,11 +13,12 @@ namespace SceneWindowSystem
 		readonly GUILayoutOption kButtonWidth = GUILayout.Width(36);
 
 		SceneWindowSettings m_settings;
-		string[] m_sceneList;
-
 		List<string> m_remove = new List<string>();
 		Dictionary<string, string> m_rename = new Dictionary<string, string>();
 		Dictionary<string, string[]> m_editscene = new Dictionary<string, string[]>();
+
+		string[] m_scenePaths;
+
 
 		//----------------------------------------------
 		// static function
@@ -26,9 +27,9 @@ namespace SceneWindowSystem
 		[MenuItem("Edit/Project Settings/SceneWindow")]
 		public static void Open()
 		{
-			var setting = SceneWindowSettings.Create();
-			Selection.activeObject = setting;
+			Selection.activeObject = SceneWindowSettings.Create();
 		}
+
 
 		//----------------------------------------------
 		// unity system function
@@ -38,9 +39,9 @@ namespace SceneWindowSystem
 		{
 			m_settings = target as SceneWindowSettings;
 
-			m_sceneList = Array.ConvertAll(
+			m_scenePaths = Array.ConvertAll(
 				AssetDatabase.FindAssets("t:scene"),
-				i => Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(i)));
+				i => AssetDatabase.GUIDToAssetPath(i));
 		}
 
 		void OnDisable()
@@ -80,17 +81,17 @@ namespace SceneWindowSystem
 
 				using (var check = new EditorGUI.ChangeCheckScope())
 				{
-					var sceneNames = kvp.Value;
+					var scenePaths = kvp.Value;
 
 					++EditorGUI.indentLevel;
-					for (int i = 0; i < sceneNames.Length; ++i)
+					for (int i = 0; i < scenePaths.Length; ++i)
 					{
 						using (new EditorGUILayout.HorizontalScope())
 						{
-							sceneNames[i] = SceneNamePopup(sceneNames[i]);
+							scenePaths[i] = ScenePathPopup(scenePaths[i]);
 							if (GUILayout.Button("削除", EditorStyles.miniButton, kButtonWidth))
 							{
-								ArrayUtility.RemoveAt(ref sceneNames, i--);
+								ArrayUtility.RemoveAt(ref scenePaths, i--);
 							}
 						}
 					}
@@ -101,7 +102,7 @@ namespace SceneWindowSystem
 						GUILayout.FlexibleSpace();
 						if (GUILayout.Button("シーン追加"))
 						{
-							ArrayUtility.Add(ref sceneNames, string.Empty);
+							ArrayUtility.Add(ref scenePaths, string.Empty);
 						}
 					}
 
@@ -109,7 +110,7 @@ namespace SceneWindowSystem
 					{
 						if (m_editscene == null)
 							m_editscene = new Dictionary<string, string[]>();
-						m_editscene.Add(kvp.Key, sceneNames);
+						m_editscene.Add(kvp.Key, scenePaths);
 					}
 				}
 			}
@@ -122,10 +123,10 @@ namespace SceneWindowSystem
 			StopEditting();
 		}
 
-		string SceneNamePopup(string sceneName)
+		string ScenePathPopup(string scenePath)
 		{
-			var index = EditorGUILayout.Popup(Array.IndexOf(m_sceneList, sceneName), m_sceneList);
-			return index >= 0 ? m_sceneList[index] : string.Empty;
+			var index = EditorGUILayout.Popup(Array.IndexOf(m_scenePaths, scenePath), m_scenePaths);
+			return index >= 0 ? m_scenePaths[index] : string.Empty;
 		}
 
 

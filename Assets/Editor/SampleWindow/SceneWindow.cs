@@ -7,7 +7,7 @@ using UnityEditor.SceneManagement;
 namespace SceneWindowSystem
 {
 	/// <summary>
-	/// 対象のシーンが開くとウィンドウが開いて、シーンを閉じるとウィンドウも閉じる。
+	/// 対象シーンと連動いて開閉するウィンドウ
 	/// </summary>
 	public class SceneWindow<T> : EditorWindow, IHasCustomMenu
 		where T : EditorWindow
@@ -36,6 +36,7 @@ namespace SceneWindowSystem
 				}
 			};
 
+			// この瞬間だとまだUnityがインスタンス認識していないらしく多重で開いてしまうので１フレーム待つ
 			EditorApplication.delayCall += () =>
 			{
 				if (IsInTargetScene())
@@ -53,12 +54,7 @@ namespace SceneWindowSystem
 		static bool IsInTargetScene()
 		{
 			var settings = SceneWindowSettings.Create();
-			return settings.IsTarget(typeof(T).Name, GetActiveSceneName());
-		}
-
-		static string GetActiveSceneName()
-		{
-			return Path.GetFileNameWithoutExtension(EditorSceneManager.GetActiveScene().name);
+			return settings.IsTarget(typeof(T).Name, EditorSceneManager.GetActiveScene().path);
 		}
 
 
@@ -79,7 +75,6 @@ namespace SceneWindowSystem
 		protected virtual void OnEnable()
 		{
 			s_instance = this as T;
-			titleContent = new GUIContent(GetActiveSceneName());
 		}
 
 		protected virtual void OnDestroy()
