@@ -68,7 +68,7 @@ namespace SceneWindowSystem
 
 		public void AddItemsToMenu(GenericMenu menu)
 		{
-			menu.AddItem(new GUIContent("設定を開く"), false, SceneWindowSettingsWindow.Open);
+			menu.AddItem(new GUIContent("設定を開く"), false, SceneWindowSettingsInspector.Open);
 		}
 		              
 

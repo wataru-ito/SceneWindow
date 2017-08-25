@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UnityEngine;
 
 namespace SceneWindowSystem
 {
-	public class SceneWindowSettings
+	/// <summary>
+	/// Inspectorに情報表示するためだけにScriptableObjectを継承している。
+	/// データ的には全くScriptableObjetである必要はない。
+	/// </summary>
+	public class SceneWindowSettings : ScriptableObject
 	{
 		const string kFilePath = "ProjectSettings/SceneWindow.txt";
 
@@ -18,33 +23,8 @@ namespace SceneWindowSystem
 
 		public static SceneWindowSettings Create()
 		{
-			var settings = new SceneWindowSettings();
-			if (File.Exists(kFilePath))
-			{
-				try
-				{
-					// Xmlでシリアライズとかの方が早いかな？
-					using (var sr = new StreamReader(kFilePath, Encoding.UTF8))
-					{
-						string line = null;
-						while ((line = sr.ReadLine()) != null)
-						{
-							var elements = line.Split(',');
-							var className = elements[0];
-							var sceneNames = new string[elements.Length - 1];
-							for (int i = 0; i < sceneNames.Length; ++i)
-							{
-								sceneNames[i] = elements[1 + i];
-							}
-							settings.map.Add(className, sceneNames);
-						}
-					}
-				}
-				catch(Exception)
-				{
-					settings.map.Clear();
-				}
-			}
+			var settings = ScriptableObject.CreateInstance<SceneWindowSettings>();
+			settings.Revert();
 			return settings;
 		}
 
@@ -61,6 +41,37 @@ namespace SceneWindowSystem
 				sb.AppendLine();
 			}
 			File.WriteAllText(kFilePath, sb.ToString(), Encoding.UTF8);			
+		}
+
+		public void Revert()
+		{
+			map.Clear();
+
+			if (!File.Exists(kFilePath)) return;
+
+			try
+			{
+				// Xmlでシリアライズとかの方が早いかな？
+				using (var sr = new StreamReader(kFilePath, Encoding.UTF8))
+				{
+					string line = null;
+					while ((line = sr.ReadLine()) != null)
+					{
+						var elements = line.Split(',');
+						var className = elements[0];
+						var sceneNames = new string[elements.Length - 1];
+						for (int i = 0; i < sceneNames.Length; ++i)
+						{
+							sceneNames[i] = elements[1 + i];
+						}
+						map.Add(className, sceneNames);
+					}
+				}
+			}
+			catch (Exception)
+			{
+				map.Clear();
+			}
 		}
 
 		public bool IsTarget(string className, string sceneName)

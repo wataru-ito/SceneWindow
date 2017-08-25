@@ -7,8 +7,8 @@ using UnityEditor;
 
 namespace SceneWindowSystem
 {
-
-	public class SceneWindowSettingsWindow : EditorWindow
+	[CustomEditor(typeof(SceneWindowSettings))]
+	public class SceneWindowSettingsInspector : Editor
 	{
 		readonly GUILayoutOption kButtonWidth = GUILayout.Width(36);
 
@@ -26,7 +26,8 @@ namespace SceneWindowSystem
 		[MenuItem("Edit/Project Settings/SceneWindow")]
 		public static void Open()
 		{
-			GetWindow<SceneWindowSettingsWindow>();
+			var setting = SceneWindowSettings.Create();
+			Selection.activeObject = setting;
 		}
 
 		//----------------------------------------------
@@ -35,31 +36,26 @@ namespace SceneWindowSystem
 
 		void OnEnable()
 		{
-			titleContent = new GUIContent("SceneWindow設定");
+			m_settings = target as SceneWindowSettings;
 
-			m_settings = SceneWindowSettings.Create();
-
-			m_sceneList = AssetDatabase.FindAssets("t:scene")
-				.Select(i => Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(i)))
-				.ToArray();
+			m_sceneList = Array.ConvertAll(
+				AssetDatabase.FindAssets("t:scene"),
+				i => Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(i)));
 		}
 
-		void OnGUI()
+		void OnDisable()
 		{
-			EditorGUIUtility.labelWidth = 70;
-
-			using (new EditorGUILayout.HorizontalScope())
+			if (m_settings != null)
 			{
-				if (GUILayout.Button("Apply", "ButtonLeft"))
-				{
-					m_settings.Save();
-				}
-
-				if (GUILayout.Button("Revert", "ButtonRight"))
-				{
-					m_settings = SceneWindowSettings.Create();
-				}
+				m_settings.Save();
 			}
+		}
+
+		public override void OnInspectorGUI()
+		{
+			base.OnInspectorGUI();
+
+			EditorGUIUtility.labelWidth = 70;
 
 			StartEditing();
 
@@ -78,7 +74,7 @@ namespace SceneWindowSystem
 
 					if (GUILayout.Button("削除", EditorStyles.miniButton, kButtonWidth))
 					{
-						
+						m_remove.Add(className);
 					}
 				}
 
@@ -174,6 +170,7 @@ namespace SceneWindowSystem
 				{
 					m_settings.map.Remove(className);
 				}
+				m_remove.Clear();
 			}
 		}
 	}
