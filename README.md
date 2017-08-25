@@ -4,7 +4,7 @@
 # 使い方
 
 ### EditorWindow側の準備
-1. SceneWindowSystem.SceneWindow<T> を継承する
+1. SceneWindowSystem.SceneWindow< T > を継承する
 2. [InitializeOnLoadMethod]属性で OnInitializeOnLoadMethod() を呼ぶ
   
 ### EditorWindowとSceneを関連づけ
@@ -15,7 +15,7 @@
 using UnityEditor;
 using SceneWindowSystem;
 
-public class SampleWindow : SceneWindow<Sample01Window>
+public class SampleWindow : SceneWindow<SampleWindow>
 {
 	[InitializeOnLoadMethod]
 	static void Init()
