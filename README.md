@@ -9,3 +9,24 @@
   
 ### EditorWindowとSceneを関連づけ
 1. MENU[Edit/Project Settings/SceneMenu]から設定
+
+
+```C#
+using UnityEditor;
+using SceneWindowSystem;
+
+public class SampleWindow : SceneWindow<Sample01Window>
+{
+	[InitializeOnLoadMethod]
+	static void Init()
+	{
+		OnInitializeOnLoadMethod();
+	}
+
+	void OnGUI()
+	{
+		EditorGUILayout.LabelField("SampleWindow");
+	}
+}
+
+```
