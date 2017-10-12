@@ -3,6 +3,10 @@
 
 特定のシーンでの編集をアシストするツールに。メニューもスッキリ。
 
+# インストール
+
+[パッケージファイル](https://github.com/wataru-ito/SceneWindow/blob/master/SceneWindow.unitypackage)
+
 # 使い方
 
 ### EditorWindow に SceneWindow.Open 属性をつけるだけ
