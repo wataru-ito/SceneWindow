@@ -5,26 +5,17 @@
 
 # 使い方
 
-### EditorWindow側の準備
-1. SceneWindowSystem.SceneWindow< T > を継承する
-2. [InitializeOnLoadMethod]属性で OnInitializeOnLoadMethod() を呼ぶ
-  
-### EditorWindowとSceneを関連づけ
-1. MENU[Edit/Project Settings/SceneMenu]から設定
+### EditorWindow に SceneWindow.Open 属性をつけるだけ
 
 
 ```C#
 using UnityEditor;
 using SceneWindowSystem;
 
-public class SampleWindow : SceneWindow<SampleWindow>
+// Hogeシーンを開くと自動で開くウィンドウ
+[SceneWindow.Open("Hoge")]
+public class SampleWindow : EditorWindow
 {
-	[InitializeOnLoadMethod]
-	static void Init()
-	{
-		OnInitializeOnLoadMethod();
-	}
-
 	void OnGUI()
 	{
 		EditorGUILayout.LabelField("SampleWindow");
